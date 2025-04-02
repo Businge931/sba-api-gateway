@@ -4,16 +4,16 @@ import (
 	"context"
 )
 
-
 type AuthClient interface {
-	// Login authenticates a user and returns a token.
 	Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error)
-
-	// Register creates a new user account.
 	Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error)
-
-	// VerifyToken validates a JWT token and returns its status.
 	VerifyToken(ctx context.Context, token string) (*VerifyTokenResponse, error)
+}
+
+type GenericResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+	Token   string `json:"token"`
 }
 
 // LoginRequest represents the request payload for the Login method.

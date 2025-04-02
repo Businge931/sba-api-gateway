@@ -9,15 +9,15 @@ import (
 	"github.com/Businge931/sba-api-gateway/proto"
 )
 
-type OddsClient struct {
+type OddsServer struct {
 	client proto.OddsServiceClient
 }
 
-func NewOddsClient(conn *grpc.ClientConn) *OddsClient {
-	return &OddsClient{client: proto.NewOddsServiceClient(conn)}
+func NewOddsServer(conn *grpc.ClientConn) *OddsServer {
+	return &OddsServer{client: proto.NewOddsServiceClient(conn)}
 }
 
-func (c *OddsClient) CreateOdds(ctx context.Context, req *domain.CreateOddsRequest) (*domain.CreateOddsResponse, error) {
+func (c *OddsServer) CreateOdds(ctx context.Context, req *domain.CreateOddsRequest) (*domain.CreateOddsResponse, error) {
 	protoReq := &proto.CreateOddsRequest{
 		League:          req.League,
 		HomeTeam:        req.HomeTeam,
@@ -34,13 +34,13 @@ func (c *OddsClient) CreateOdds(ctx context.Context, req *domain.CreateOddsReque
 	}
 
 	return &domain.CreateOddsResponse{
-		Success: res.Success,
-		Message: res.Message,
-		Details: res.Details,
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+		Details: res.GetDetails(),
 	}, nil
 }
 
-func (c *OddsClient) ReadOdds(ctx context.Context, req *domain.ReadOddsRequest) (*domain.ReadOddsResponse, error) {
+func (c *OddsServer) ReadOdds(ctx context.Context, req *domain.ReadOddsRequest) (*domain.ReadOddsResponse, error) {
 	protoReq := &proto.ReadOddsRequest{
 		League: req.League,
 		Date:   req.Date,
@@ -53,24 +53,24 @@ func (c *OddsClient) ReadOdds(ctx context.Context, req *domain.ReadOddsRequest) 
 
 	// Map the gRPC response to the domain response
 	odds := make([]domain.CreateOddsRequest, len(res.Odds))
-	for i, protoOdds := range res.Odds {
+	for i, protoOdds := range res.GetOdds() {
 		odds[i] = domain.CreateOddsRequest{
-			League:          protoOdds.League,
-			HomeTeam:        protoOdds.HomeTeam,
-			AwayTeam:        protoOdds.AwayTeam,
-			HomeTeamWinOdds: float64(protoOdds.HomeTeamWinOdds),
-			AwayTeamWinOdds: float64(protoOdds.AwayTeamWinOdds),
-			DrawOdds:        float64(protoOdds.DrawOdds),
+			League:          protoOdds.GetLeague(),
+			HomeTeam:        protoOdds.GetHomeTeam(),
+			AwayTeam:        protoOdds.GetAwayTeam(),
+			HomeTeamWinOdds: float64(protoOdds.GetHomeTeamWinOdds()),
+			AwayTeamWinOdds: float64(protoOdds.GetAwayTeamWinOdds()),
+			DrawOdds:        float64(protoOdds.GetDrawOdds()),
 			GameDate:        protoOdds.GameDate,
 		}
 	}
 
 	return &domain.ReadOddsResponse{
 		Odds:    odds,
-		Details: res.Details,
+		Details: res.GetDetails(),
 	}, nil
 }
-func (c *OddsClient) UpdateOdds(ctx context.Context, req *domain.UpdateOddsRequest) (*domain.UpdateOddsResponse, error) {
+func (c *OddsServer) UpdateOdds(ctx context.Context, req *domain.UpdateOddsRequest) (*domain.UpdateOddsResponse, error) {
 	protoReq := &proto.UpdateOddsRequest{
 		League:          req.League,
 		HomeTeam:        req.HomeTeam,
@@ -87,13 +87,13 @@ func (c *OddsClient) UpdateOdds(ctx context.Context, req *domain.UpdateOddsReque
 	}
 
 	return &domain.UpdateOddsResponse{
-		Success: res.Success,
-		Message: res.Message,
-		Details: res.Details,
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+		Details: res.GetDetails(),
 	}, nil
 }
 
-func (c *OddsClient) DeleteOdds(ctx context.Context, req *domain.DeleteOddsRequest) (*domain.DeleteOddsResponse, error) {
+func (c *OddsServer) DeleteOdds(ctx context.Context, req *domain.DeleteOddsRequest) (*domain.DeleteOddsResponse, error) {
 	protoReq := &proto.DeleteOddsRequest{
 		League:   req.League,
 		HomeTeam: req.HomeTeam,
@@ -107,8 +107,8 @@ func (c *OddsClient) DeleteOdds(ctx context.Context, req *domain.DeleteOddsReque
 	}
 
 	return &domain.DeleteOddsResponse{
-		Success: res.Success,
-		Message: res.Message,
-		Details: res.Details,
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+		Details: res.GetDetails(),
 	}, nil
 }

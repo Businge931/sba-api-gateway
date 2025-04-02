@@ -9,15 +9,15 @@ import (
 	"github.com/Businge931/sba-api-gateway/proto"
 )
 
-type AuthClient struct {
+type AuthServer struct {
 	client proto.AuthServiceClient
 }
 
-func NewAuthClient(conn *grpc.ClientConn) *AuthClient {
-	return &AuthClient{client: proto.NewAuthServiceClient(conn)}
+func NewAuthServer(conn *grpc.ClientConn) *AuthServer {
+	return &AuthServer{client: proto.NewAuthServiceClient(conn)}
 }
 
-func (c *AuthClient) Login(ctx context.Context, req *domain.LoginRequest) (*domain.LoginResponse, error) {
+func (c *AuthServer) Login(ctx context.Context, req *domain.LoginRequest) (*domain.LoginResponse, error) {
 	protoReq := &proto.LoginRequest{
 		Username: req.Username,
 		Password: req.Password,
@@ -27,11 +27,13 @@ func (c *AuthClient) Login(ctx context.Context, req *domain.LoginRequest) (*doma
 		return nil, err
 	}
 	return &domain.LoginResponse{
-		Token: res.Token,
+		Success: true, // Set success to true when login is successful
+		Token: res.GetToken(),
+		Message: "Login successful", // Add a success message
 	}, nil
 }
 
-func (c *AuthClient) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.RegisterResponse, error) {
+func (c *AuthServer) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.RegisterResponse, error) {
 	protoReq := &proto.RegisterRequest{
 		Username: req.Username,
 		Password: req.Password,
@@ -41,17 +43,18 @@ func (c *AuthClient) Register(ctx context.Context, req *domain.RegisterRequest) 
 		return nil, err
 	}
 	return &domain.RegisterResponse{
-		Message: res.Message,
+		Success: true, // Set success to true when registration is successful
+		Message: res.GetMessage(),
 	}, nil
 }
 
-func (c *AuthClient) VerifyToken(ctx context.Context, token string) (*domain.VerifyTokenResponse, error) {
+func (c *AuthServer) VerifyToken(ctx context.Context, token string) (*domain.VerifyTokenResponse, error) {
 	res, err := c.client.VerifyToken(ctx, &proto.VerifyTokenRequest{Token: token})
 	if err != nil {
 		return nil, err
 	}
 	return &domain.VerifyTokenResponse{
-		Success: res.Success,
-		Message: res.Message,
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
 	}, nil
 }

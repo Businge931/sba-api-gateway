@@ -17,7 +17,7 @@ type oddsService struct {
 	client domain.OddsClient
 }
 
-func NewOddsService(client domain.OddsClient) OddsService {
+func NewOddsService(client domain.OddsClient) *oddsService {
 	return &oddsService{client: client}
 }
 

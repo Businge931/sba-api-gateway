@@ -19,7 +19,7 @@ type AuthServiceImpl struct {
 	client domain.AuthClient
 }
 
-func NewAuthService(client domain.AuthClient) AuthService {
+func NewAuthService(client domain.AuthClient) *AuthServiceImpl {
 	return &AuthServiceImpl{client: client}
 }
 

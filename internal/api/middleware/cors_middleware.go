@@ -7,9 +7,10 @@ import (
 // GetCORSConfig returns a CORS handler with predefined options
 func GetCORSConfig() *cors.Cors {
 	return cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow frontend origin
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowedOrigins:   []string{"*"}, // Allow all origins including Postman
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type", "Accept", "Origin", "User-Agent"},
 		AllowCredentials: true,
+		Debug:           true, // Enable debug logging for CORS issues
 	})
 }
