@@ -1,4 +1,3 @@
-
 package service
 
 import (
@@ -16,21 +15,21 @@ type AuthService interface {
 
 // AuthServiceImpl implements the AuthService interface.
 type AuthServiceImpl struct {
-	client domain.AuthClient
+	service AuthService
 }
 
-func NewAuthService(client domain.AuthClient) *AuthServiceImpl {
-	return &AuthServiceImpl{client: client}
+func NewAuthService(service AuthService) *AuthServiceImpl {
+	return &AuthServiceImpl{service: service}
 }
 
 func (s *AuthServiceImpl) Login(ctx context.Context, req *domain.LoginRequest) (*domain.LoginResponse, error) {
-	return s.client.Login(ctx, req)
+	return s.service.Login(ctx, req)
 }
 
 func (s *AuthServiceImpl) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.RegisterResponse, error) {
-	return s.client.Register(ctx, req)
+	return s.service.Register(ctx, req)
 }
 
 func (s *AuthServiceImpl) VerifyToken(ctx context.Context, token string) (*domain.VerifyTokenResponse, error) {
-	return s.client.VerifyToken(ctx, token)
+	return s.service.VerifyToken(ctx, token)
 }

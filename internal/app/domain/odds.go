@@ -12,56 +12,56 @@ type OddsClient interface {
 }
 
 type CreateOddsRequest struct {
-	League          string  `json:"league"`
-	HomeTeam        string  `json:"home_team"`
-	AwayTeam        string  `json:"away_team"`
-	HomeTeamWinOdds float64 `json:"home_team_win_odds"`
-	AwayTeamWinOdds float64 `json:"away_team_win_odds"`
-	DrawOdds        float64 `json:"draw_odds"`
-	GameDate        string  `json:"game_date"`
+	League          string
+	HomeTeam        string
+	AwayTeam        string
+	HomeTeamWinOdds float64
+	AwayTeamWinOdds float64
+	DrawOdds        float64
+	GameDate        string
 }
 
 type CreateOddsResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Details string `json:"details"`
+	Success bool
+	Message string
+	Details string
 }
 
 type ReadOddsRequest struct {
-	League string `json:"league"`
-	Date   string `json:"date"`
+	League string
+	Date   string
 }
 
 type ReadOddsResponse struct {
-	Odds    []CreateOddsRequest `json:"odds"`
-	Details string              `json:"details"`
+	Odds    []CreateOddsRequest
+	Details string
 }
 
 type UpdateOddsRequest struct {
-	League          string  `json:"league"`
-	HomeTeam        string  `json:"home_team"`
-	AwayTeam        string  `json:"away_team"`
-	HomeTeamWinOdds float64 `json:"home_team_win_odds"`
-	AwayTeamWinOdds float64 `json:"away_team_win_odds"`
-	DrawOdds        float64 `json:"draw_odds"`
-	GameDate        string  `json:"game_date"`
+	League          string
+	HomeTeam        string
+	AwayTeam        string
+	HomeTeamWinOdds float64
+	AwayTeamWinOdds float64
+	DrawOdds        float64
+	GameDate        string
 }
 
 type UpdateOddsResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Details string `json:"details"`
+	Success bool
+	Message string
+	Details string
 }
 
 type DeleteOddsRequest struct {
-	League   string `json:"league"`
-	HomeTeam string `json:"home_team"`
-	AwayTeam string `json:"away_team"`
-	GameDate string `json:"game_date"`
+	League   string
+	HomeTeam string
+	AwayTeam string
+	GameDate string
 }
 
 type DeleteOddsResponse struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Details string `json:"details"`
+	Success bool
+	Message string
+	Details string
 }

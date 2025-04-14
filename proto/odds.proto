@@ -15,9 +15,9 @@ message CreateOddsRequest {
   string league = 1;
   string home_team = 2;
   string away_team = 3;
-  float home_team_win_odds = 4;
-  float away_team_win_odds = 5;
-  float draw_odds = 6;
+  double home_team_win_odds = 4;
+  double away_team_win_odds = 5;
+  double draw_odds = 6;
   string game_date = 7;
 }
 

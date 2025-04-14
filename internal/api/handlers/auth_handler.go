@@ -8,16 +8,21 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/Businge931/sba-api-gateway/internal/app/domain"
-	"github.com/Businge931/sba-api-gateway/internal/app/service"
+	"github.com/Businge931/sba-api-gateway/internal/api/models"
 	"github.com/Businge931/sba-api-gateway/proto"
 )
 
-type AuthHandler struct {
-	authService service.AuthService
+type AuthService interface {
+	Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error)
+	Register(ctx context.Context, req *models.RegisterRequest) (*models.RegisterResponse, error)
+	VerifyToken(ctx context.Context, token string) (*models.VerifyTokenResponse, error)
 }
 
-func NewAuthHandler(authService service.AuthService) *AuthHandler {
+type AuthHandler struct {
+	authService AuthService
+}
+
+func NewAuthHandler(authService AuthService) *AuthHandler {
 	return &AuthHandler{authService: authService}
 }
 
@@ -27,7 +32,7 @@ func handleRequest[T any, U any](
 	r *http.Request,
 	validateFunc func(*T) bool,
 	convertFunc func(*T) *U,
-	serviceFunc func(context.Context, *U) (*domain.GenericResponse, error),
+	serviceFunc func(context.Context, *U) (*models.GenericResponse, error),
 ) {
 	var req T
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -63,19 +68,19 @@ func handleRequest[T any, U any](
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	handleRequest(w, r,
 		ValidateLoginRequest,
-		func(req *proto.LoginRequest) *domain.LoginRequest {
-			return &domain.LoginRequest{
+		func(req *proto.LoginRequest) *models.LoginRequest {
+			return &models.LoginRequest{
 				Username: req.Username,
 				Password: req.Password,
 			}
 		},
-		func(ctx context.Context, req *domain.LoginRequest) (*domain.GenericResponse, error) {
+		func(ctx context.Context, req *models.LoginRequest) (*models.GenericResponse, error) {
 			res, err := h.authService.Login(ctx, req)
 			if err != nil {
 				// Return nil response with error to trigger proper error handling
 				return nil, err
 			}
-			return &domain.GenericResponse{
+			return &models.GenericResponse{
 				Success: res.Success,
 				Message: res.Message,
 				Token:   res.Token,
@@ -88,15 +93,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	handleRequest(w, r,
 		ValidateRegisterRequest,
-		func(req *proto.RegisterRequest) *domain.RegisterRequest {
-			return &domain.RegisterRequest{
+		func(req *proto.RegisterRequest) *models.RegisterRequest {
+			return &models.RegisterRequest{
 				Username: req.Username,
 				Password: req.Password,
 			}
 		},
-		func(ctx context.Context, req *domain.RegisterRequest) (*domain.GenericResponse, error) {
+		func(ctx context.Context, req *models.RegisterRequest) (*models.GenericResponse, error) {
 			res, err := h.authService.Register(ctx, req)
-			return &domain.GenericResponse{
+			return &models.GenericResponse{
 				Success: res.Success,
 				Message: res.Message,
 			}, err
@@ -193,7 +198,7 @@ func handleGRPCError(w http.ResponseWriter, err error) {
 func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	
+
 	// Create a properly formatted JSON error response
 	response := struct {
 		Success bool   `json:"success"`
@@ -204,6 +209,6 @@ func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
 		Message: "",
 		Error:   message,
 	}
-	
+
 	json.NewEncoder(w).Encode(response)
 }

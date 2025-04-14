@@ -22,7 +22,7 @@ func main() {
 
 	// Connect to gRPC services
 	// Connect to odds service on port 50052
-	oddsConn, err := grpc.NewClient("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	oddsConn, err := grpc.Dial("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to odds service: %v", err)
 	}
@@ -30,7 +30,7 @@ func main() {
 	log.Info("Connected to odds service")
 
 	// Connect to auth service on port 50051
-	authConn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	authConn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to auth service: %v", err)
 	}
