@@ -66,7 +66,7 @@ func CreateAndInitDatabases(ctx context.Context, t *testing.T, postgresContainer
 		"psql", "-U", "postgres", "-c", 
 		"GRANT ALL PRIVILEGES ON DATABASE sba_user_accounts TO postgres;",
 	}
-	exitCode, stdout, stderr = postgresContainer.Exec(ctx, grantAuthDbCmd)
+	exitCode, _, stderr = postgresContainer.Exec(ctx, grantAuthDbCmd)
 	if exitCode != 0 {
 		t.Logf("Warning while setting auth DB permissions: %s", stderr)
 		// Continue despite errors here
@@ -76,7 +76,7 @@ func CreateAndInitDatabases(ctx context.Context, t *testing.T, postgresContainer
 		"psql", "-U", "postgres", "-c", 
 		"GRANT ALL PRIVILEGES ON DATABASE sba_odds TO postgres;",
 	}
-	exitCode, stdout, stderr = postgresContainer.Exec(ctx, grantOddsDbCmd)
+	exitCode, _, stderr = postgresContainer.Exec(ctx, grantOddsDbCmd)
 	if exitCode != 0 {
 		t.Logf("Warning while setting odds DB permissions: %s", stderr)
 		// Continue despite errors here

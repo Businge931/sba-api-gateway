@@ -189,13 +189,4 @@ func TestFullUserJourney(t *testing.T, apiEndpoint string) {
 	t.Log("Note: Odds functionality has database schema mismatches that need to be fixed separately")
 	t.Log("End-to-end test complete with limitations due to schema mismatches")
 	
-	// The database schema discrepancy between the test expectations and the Odds service
-	// implementation needs to be fixed in a separate update:
-	// 1. The error suggests 'league' column doesn't exist in the odds table
-	// 2. The odds read endpoint returns an error about unknown method 'ReadOdds'
-	
-	// These issues should be addressed with:
-	// - Updating the Odds service schema to match the test expectations
-	// - Updating the test to match the actual Odds service implementation
-	// - Ensuring consistent naming between API gateway and microservices
 }

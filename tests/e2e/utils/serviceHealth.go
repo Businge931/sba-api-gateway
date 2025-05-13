@@ -19,7 +19,8 @@ func VerifyServiceHealth(healthEndpoint string, t *testing.T) bool {
 	}
 
 	// Try the health endpoint a few times
-	for i := 0; i < 5; i++ {
+	tries:=5
+	for i := range tries{
 		resp, err := client.Get(healthEndpoint)
 		if err != nil {
 			t.Logf("Health check attempt %d failed: %v", i+1, err)
