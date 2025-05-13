@@ -14,23 +14,43 @@ import (
 	server "github.com/Businge931/sba-api-gateway/internal/server/grpc"
 )
 
+// getEnv retrieves the value of the environment variable named by the key
+// If the variable is not present, returns the fallback value
+func getEnv(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return fallback
+	}
+	return value
+}
+
 func main() {
 	// Set up logging
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.InfoLevel)
 
-	// Connect to gRPC services
-	// Connect to odds service on port 50052
-	oddsConn, err := grpc.Dial("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// Get service hosts and ports from environment variables or use defaults
+	oddsServiceHost := getEnv("ODDS_SERVICE_HOST", "localhost")
+	oddsServicePort := getEnv("ODDS_SERVICE_PORT", "50052")
+	authServiceHost := getEnv("AUTH_SERVICE_HOST", "localhost")
+	authServicePort := getEnv("AUTH_SERVICE_PORT", "50051")
+	
+	oddsAddr := oddsServiceHost + ":" + oddsServicePort
+	authAddr := authServiceHost + ":" + authServicePort
+	
+	// Connect to odds service
+	log.Infof("Connecting to odds service at %s", oddsAddr)
+	oddsConn, err := grpc.Dial(oddsAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to odds service: %v", err)
 	}
 	defer oddsConn.Close()
 	log.Info("Connected to odds service")
 
-	// Connect to auth service on port 50051
-	authConn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	// Connect to auth service
+	log.Infof("Connecting to auth service at %s", authAddr)
+	authConn, err := grpc.Dial(authAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to auth service: %v", err)
 	}

@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTH_SERVICE_HOST=sba-user-accounts
+      - AUTH_SERVICE_PORT=50051
+      - ODDS_SERVICE_HOST=sba-crud-ops
+      - ODDS_SERVICE_PORT=50052
+    depends_on:
+      - sba-user-accounts
+      - sba-crud-ops
+    networks:
+      - sba-network
+
+  sba-user-accounts:
+    build:
+      context: ../sba-user-accounts
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    networks:
+      - sba-network
+
+  sba-crud-ops:
+    build:
+      context: ../sba-crud-ops
+      dockerfile: Dockerfile
+    ports:
+      - "50052:50052"
+    networks:
+      - sba-network
+
+networks:
+  sba-network:
+    driver: bridge
