@@ -101,10 +101,13 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		},
 		func(ctx context.Context, req *models.RegisterRequest) (*models.GenericResponse, error) {
 			res, err := h.authService.Register(ctx, req)
+			if err != nil {
+				return nil, err
+			}
 			return &models.GenericResponse{
 				Success: res.Success,
 				Message: res.Message,
-			}, err
+			}, nil
 		},
 	)
 }
@@ -172,7 +175,7 @@ func handleGRPCError(w http.ResponseWriter, err error) {
 
 	// Map gRPC status codes to HTTP status codes
 	switch st.Code() {
-	case codes.InvalidArgument:
+	case codes.InvalidArgument, codes.AlreadyExists:
 		httpStatus = http.StatusBadRequest
 	case codes.Unauthenticated:
 		httpStatus = http.StatusUnauthorized
@@ -192,23 +195,4 @@ func handleGRPCError(w http.ResponseWriter, err error) {
 		"success": false,
 		"error":   errorMessage,
 	})
-}
-
-// writeJSONError writes a JSON formatted error response
-func writeJSONError(w http.ResponseWriter, message string, statusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	// Create a properly formatted JSON error response
-	response := struct {
-		Success bool   `json:"success"`
-		Message string `json:"message"`
-		Error   string `json:"error"`
-	}{
-		Success: false,
-		Message: "",
-		Error:   message,
-	}
-
-	json.NewEncoder(w).Encode(response)
 }
