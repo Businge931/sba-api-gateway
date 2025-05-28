@@ -31,7 +31,7 @@ func (m *MockOddsServer) UpdateOdds(ctx context.Context, req *domain.UpdateOddsR
 	args := m.Called(ctx, req)
 	return args.Get(0).(*domain.UpdateOddsResponse), args.Error(1)
 }
-
+ 
 // DeleteOdds mocks the DeleteOdds method
 func (m *MockOddsServer) DeleteOdds(ctx context.Context, req *domain.DeleteOddsRequest) (*domain.DeleteOddsResponse, error) {
 	args := m.Called(ctx, req)

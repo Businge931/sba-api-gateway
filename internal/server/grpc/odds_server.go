@@ -21,21 +21,10 @@ func NewOddsServer(conn *grpc.ClientConn) *OddsServer {
 
 func (c *OddsServer) CreateOdds(ctx context.Context, req *domain.CreateOddsRequest) (*domain.CreateOddsResponse, error) {
 	// Ensure the odds values are strictly positive by using a minimum threshold
-	homeOdds := req.HomeTeamWinOdds
-	if homeOdds < 1.0 {
-		homeOdds = 1.0
-	}
-	
-	awayOdds := req.AwayTeamWinOdds
-	if awayOdds < 1.0 {
-		awayOdds = 1.0
-	}
-	
-	drawOdds := req.DrawOdds
-	if drawOdds < 1.0 {
-		drawOdds = 1.0
-	}
-	
+	homeOdds := max(req.HomeTeamWinOdds, 1.0)
+	awayOdds := max(req.AwayTeamWinOdds, 1.0)
+	drawOdds := max(req.DrawOdds, 1.0)
+
 	protoReq := &proto.CreateOddsRequest{
 		League:          req.League,
 		HomeTeam:        req.HomeTeam,
