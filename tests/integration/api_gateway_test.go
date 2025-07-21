@@ -37,7 +37,7 @@ type MockAuthServer struct {
 
 // Login mocks the login method
 func (s *MockAuthServer) Login(ctx context.Context, req *proto.LoginRequest) (*proto.LoginResponse, error) {
-	if req.Username == "testuser" && req.Password == "testpass" {
+	if req.Email == "testuser" && req.Password == "testpass" {
 		return &proto.LoginResponse{
 			Success: true,
 			Token:   "test-jwt-token",
@@ -49,7 +49,7 @@ func (s *MockAuthServer) Login(ctx context.Context, req *proto.LoginRequest) (*p
 
 // Register mocks the register method
 func (s *MockAuthServer) Register(ctx context.Context, req *proto.RegisterRequest) (*proto.RegisterResponse, error) {
-	if req.Username == "newuser" {
+	if req.Email == "newuser" {
 		return &proto.RegisterResponse{
 			Success: true,
 			Message: "User registered successfully",

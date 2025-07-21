@@ -53,7 +53,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 			name: "successful login",
 			mockSetup: func(mas *MockAuthService) {
 				mas.On("Login", mock.Anything, &domain.LoginRequest{
-					Username: "testuser",
+					Email:    "testuser@test.com",
 					Password: "testpass",
 				}).Return(&domain.LoginResponse{
 					Success: true,
@@ -62,7 +62,7 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 				}, nil)
 			},
 			args: &domain.LoginRequest{
-				Username: "testuser",
+				Email:    "testuser@test.com",
 				Password: "testpass",
 			},
 			want: &domain.LoginResponse{
@@ -76,12 +76,12 @@ func TestAuthServiceImpl_Login(t *testing.T) {
 			name: "invalid credentials",
 			mockSetup: func(mas *MockAuthService) {
 				mas.On("Login", mock.Anything, &domain.LoginRequest{
-					Username: "wronguser",
+					Email:    "wronguser@test.com",
 					Password: "wrongpass",
 				}).Return((*domain.LoginResponse)(nil), errors.New("invalid credentials"))
 			},
 			args: &domain.LoginRequest{
-				Username: "wronguser",
+				Email:    "wronguser@test.com",
 				Password: "wrongpass",
 			},
 			want:          nil,
@@ -132,7 +132,7 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 			name: "successful registration",
 			mockSetup: func(mas *MockAuthService) {
 				mas.On("Register", mock.Anything, &domain.RegisterRequest{
-					Username: "newuser",
+					Email:    "newuser@test.com",
 					Password: "newpass",
 				}).Return(&domain.RegisterResponse{
 					Success: true,
@@ -140,7 +140,7 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 				}, nil)
 			},
 			args: &domain.RegisterRequest{
-				Username: "newuser",
+				Email:    "newuser@test.com",
 				Password: "newpass",
 			},
 			want: &domain.RegisterResponse{
@@ -153,12 +153,12 @@ func TestAuthServiceImpl_Register(t *testing.T) {
 			name: "duplicate username",
 			mockSetup: func(mas *MockAuthService) {
 				mas.On("Register", mock.Anything, &domain.RegisterRequest{
-					Username: "existinguser",
+					Email:    "existinguser@test.com",
 					Password: "password",
 				}).Return((*domain.RegisterResponse)(nil), errors.New("username already exists"))
 			},
 			args: &domain.RegisterRequest{
-				Username: "existinguser",
+				Email:    "existinguser@test.com",
 				Password: "password",
 			},
 			want:          nil,

@@ -19,7 +19,7 @@ func NewAuthServer(conn *grpc.ClientConn) *AuthServer {
 
 func (c *AuthServer) Login(ctx context.Context, req *domain.LoginRequest) (*domain.LoginResponse, error) {
 	protoReq := &proto.LoginRequest{
-		Username: req.Username,
+		Email:    req.Email,
 		Password: req.Password,
 	}
 	res, err := c.client.Login(ctx, protoReq)
@@ -28,15 +28,17 @@ func (c *AuthServer) Login(ctx context.Context, req *domain.LoginRequest) (*doma
 	}
 	return &domain.LoginResponse{
 		Success: true, // Set success to true when login is successful
-		Token: res.GetToken(),
+		Token:   res.GetToken(),
 		Message: "Login successful", // Add a success message
 	}, nil
 }
 
 func (c *AuthServer) Register(ctx context.Context, req *domain.RegisterRequest) (*domain.RegisterResponse, error) {
 	protoReq := &proto.RegisterRequest{
-		Username: req.Username,
-		Password: req.Password,
+		Email:     req.Email,
+		Password:  req.Password,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
 	}
 	res, err := c.client.Register(ctx, protoReq)
 	if err != nil {

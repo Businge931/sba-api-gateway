@@ -44,9 +44,9 @@ func TestAuthServiceAdapter_Register(t *testing.T) {
 	// Define test cases
 	tests := []struct {
 		name           string
-		setupMock     func(*MockAuthService)
-		req           *models.RegisterRequest
-		expected      *models.RegisterResponse
+		setupMock      func(*MockAuthService)
+		req            *models.RegisterRequest
+		expected       *models.RegisterResponse
 		expectedError  bool
 		expectedErrMsg string
 	}{
@@ -54,16 +54,20 @@ func TestAuthServiceAdapter_Register(t *testing.T) {
 			name: "successful registration",
 			setupMock: func(m *MockAuthService) {
 				m.On("Register", mock.Anything, &domain.RegisterRequest{
-					Username: "newuser",
-					Password: "SecurePass123!",
+					Email:     "newuser@test.com",
+					Password:  "SecurePass123!",
+					FirstName: "newuser",
+					LastName:  "newuser",
 				}).Return(&domain.RegisterResponse{
 					Success: true,
 					Message: "User registered successfully",
 				}, nil)
 			},
 			req: &models.RegisterRequest{
-				Username: "newuser",
-				Password: "SecurePass123!",
+				Email:     "newuser@test.com",
+				Password:  "SecurePass123!",
+				FirstName: "newuser",
+				LastName:  "newuser",
 			},
 			expected: &models.RegisterResponse{
 				Success: true,
@@ -75,32 +79,32 @@ func TestAuthServiceAdapter_Register(t *testing.T) {
 			name: "username already exists",
 			setupMock: func(m *MockAuthService) {
 				m.On("Register", mock.Anything, &domain.RegisterRequest{
-					Username: "existinguser",
+					Email:    "existinguser@test.com",
 					Password: "password123",
 				}).Return((*domain.RegisterResponse)(nil), errors.New("username already exists"))
 			},
 			req: &models.RegisterRequest{
-				Username: "existinguser",
+				Email:    "existinguser@test.com",
 				Password: "password123",
 			},
-			expected:      nil,
-			expectedError: true,
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "username already exists",
 		},
 		{
 			name: "weak password",
 			setupMock: func(m *MockAuthService) {
 				m.On("Register", mock.Anything, &domain.RegisterRequest{
-					Username: "newuser",
+					Email:    "newuser@test.com",
 					Password: "123",
 				}).Return((*domain.RegisterResponse)(nil), errors.New("password is too weak"))
 			},
 			req: &models.RegisterRequest{
-				Username: "newuser",
+				Email:    "newuser@test.com",
 				Password: "123", // Weak password
 			},
-			expected:      nil,
-			expectedError: true,
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "password is too weak",
 		},
 	}
@@ -116,7 +120,6 @@ func TestAuthServiceAdapter_Register(t *testing.T) {
 
 			// Create adapter with mock service
 			adapter := NewAuthServiceAdapter(mockSvc)
-
 
 			// Call the method under test
 			result, err := adapter.Register(context.Background(), tt.req)
@@ -142,9 +145,9 @@ func TestAuthServiceAdapter_Login(t *testing.T) {
 	// Define test cases
 	tests := []struct {
 		name           string
-		setupMock     func(*MockAuthService)
-		req           *models.LoginRequest
-		expected      *models.LoginResponse
+		setupMock      func(*MockAuthService)
+		req            *models.LoginRequest
+		expected       *models.LoginResponse
 		expectedError  bool
 		expectedErrMsg string
 	}{
@@ -152,7 +155,7 @@ func TestAuthServiceAdapter_Login(t *testing.T) {
 			name: "successful login",
 			setupMock: func(m *MockAuthService) {
 				m.On("Login", mock.Anything, &domain.LoginRequest{
-					Username: "testuser",
+					Email:    "testuser@test.com",
 					Password: "testpass",
 				}).Return(&domain.LoginResponse{
 					Success: true,
@@ -161,7 +164,7 @@ func TestAuthServiceAdapter_Login(t *testing.T) {
 				}, nil)
 			},
 			req: &models.LoginRequest{
-				Username: "testuser",
+				Email:    "testuser@test.com",
 				Password: "testpass",
 			},
 			expected: &models.LoginResponse{
@@ -175,32 +178,32 @@ func TestAuthServiceAdapter_Login(t *testing.T) {
 			name: "invalid credentials",
 			setupMock: func(m *MockAuthService) {
 				m.On("Login", mock.Anything, &domain.LoginRequest{
-					Username: "wronguser",
+					Email:    "wronguser",
 					Password: "wrongpass",
 				}).Return((*domain.LoginResponse)(nil), errors.New("invalid credentials"))
 			},
 			req: &models.LoginRequest{
-				Username: "wronguser",
+				Email:    "wronguser",
 				Password: "wrongpass",
 			},
-			expected:      nil,
-			expectedError: true,
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "invalid credentials",
 		},
 		{
 			name: "empty username",
 			setupMock: func(m *MockAuthService) {
 				m.On("Login", mock.Anything, &domain.LoginRequest{
-					Username: "",
+					Email:    "",
 					Password: "testpass",
 				}).Return((*domain.LoginResponse)(nil), errors.New("username is required"))
 			},
 			req: &models.LoginRequest{
-				Username: "",
+				Email:    "",
 				Password: "testpass",
 			},
-			expected:      nil,
-			expectedError: true,
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "username is required",
 		},
 	}
@@ -216,7 +219,6 @@ func TestAuthServiceAdapter_Login(t *testing.T) {
 
 			// Create adapter with mock service
 			adapter := NewAuthServiceAdapter(mockSvc)
-
 
 			// Call the method under test
 			result, err := adapter.Login(context.Background(), tt.req)
@@ -242,9 +244,9 @@ func TestAuthServiceAdapter_VerifyToken(t *testing.T) {
 	// Define test cases
 	tests := []struct {
 		name           string
-		setupMock     func(*MockAuthService)
-		token         string
-		expected      *models.VerifyTokenResponse
+		setupMock      func(*MockAuthService)
+		token          string
+		expected       *models.VerifyTokenResponse
 		expectedError  bool
 		expectedErrMsg string
 	}{
@@ -271,9 +273,9 @@ func TestAuthServiceAdapter_VerifyToken(t *testing.T) {
 					errors.New("invalid or expired token"),
 				)
 			},
-			token:         "invalid-token",
-			expected:      nil,
-			expectedError: true,
+			token:          "invalid-token",
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "invalid or expired token",
 		},
 		{
@@ -284,9 +286,9 @@ func TestAuthServiceAdapter_VerifyToken(t *testing.T) {
 					errors.New("token is required"),
 				)
 			},
-			token:         "",
-			expected:      nil,
-			expectedError: true,
+			token:          "",
+			expected:       nil,
+			expectedError:  true,
 			expectedErrMsg: "token is required",
 		},
 	}

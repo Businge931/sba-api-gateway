@@ -24,7 +24,7 @@ func NewAuthServiceAdapter(service service.AuthService) *AuthServiceAdapter {
 func (a *AuthServiceAdapter) Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error) {
 	// Convert models.LoginRequest to domain.LoginRequest
 	domainReq := &domain.LoginRequest{
-		Username: req.Username,
+		Email:    req.Email,
 		Password: req.Password,
 	}
 
@@ -46,8 +46,10 @@ func (a *AuthServiceAdapter) Login(ctx context.Context, req *models.LoginRequest
 func (a *AuthServiceAdapter) Register(ctx context.Context, req *models.RegisterRequest) (*models.RegisterResponse, error) {
 	// Convert models.RegisterRequest to domain.RegisterRequest
 	domainReq := &domain.RegisterRequest{
-		Username: req.Username,
-		Password: req.Password,
+		Email:     req.Email,
+		Password:  req.Password,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
 	}
 
 	// Call the service with the domain request

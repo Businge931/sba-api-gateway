@@ -1,36 +1,40 @@
 package domain
 
-type GenericResponse struct {
-	Success bool
-	Message string
-	Token   string
-}
+type (
+	GenericResponse struct {
+		Success bool
+		Message string
+		Token   string
+	}
 
-type LoginRequest struct {
-	Username string
-	Password string
-}
+	LoginRequest struct {
+		Email    string
+		Password string
+	}
 
-type LoginResponse struct {
-	Success bool
-	Token   string
-	Message string
-}
+	LoginResponse struct {
+		Success bool
+		Token   string
+		Message string
+	}
 
-type RegisterRequest struct {
-	Username string
-	Password string
-}
+	RegisterRequest struct {
+		Email     string
+		Password  string
+		FirstName string
+		LastName  string
+	}
 
-type RegisterResponse struct {
-	Success bool
-	Message string
-}
+	RegisterResponse struct {
+		Success bool
+		Message string
+	}
 
-type VerifyTokenRequest struct {
-	Token string
-}
-type VerifyTokenResponse struct {
-	Success bool
-	Message string
-}
+	VerifyTokenRequest struct {
+		Token string
+	}
+	VerifyTokenResponse struct {
+		Success bool
+		Message string
+	}
+)

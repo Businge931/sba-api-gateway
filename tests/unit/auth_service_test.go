@@ -42,31 +42,31 @@ func TestAuthService(t *testing.T) {
 	// Test Login
 	t.Run("Login", func(t *testing.T) {
 		tests := []struct {
-			name             string
-			username         string
-			password         string
-			expectedSuccess  bool
-			expectedToken    string
-			expectedMessage  string
-			expectedError    error
+			name            string
+			Email           string
+			password        string
+			expectedSuccess bool
+			expectedToken   string
+			expectedMessage string
+			expectedError   error
 		}{
 			{
-				name:             "successful login",
-				username:         "testuser",
-				password:         "testpass",
-				expectedSuccess:  true,
-				expectedToken:    "test-token",
-				expectedMessage:  "Login successful",
-				expectedError:    nil,
+				name:            "successful login",
+				Email:           "testuser@test.com",
+				password:        "testpass",
+				expectedSuccess: true,
+				expectedToken:   "test-token",
+				expectedMessage: "Login successful",
+				expectedError:   nil,
 			},
 			{
-				name:             "invalid credentials",
-				username:         "wronguser",
-				password:         "wrongpass",
-				expectedSuccess:  false,
-				expectedToken:    "",
-				expectedMessage:  "Invalid credentials",
-				expectedError:    nil,
+				name:            "invalid credentials",
+				Email:           "wronguser@test.com",
+				password:        "wrongpass",
+				expectedSuccess: false,
+				expectedToken:   "",
+				expectedMessage: "Invalid credentials",
+				expectedError:   nil,
 			},
 		}
 
@@ -74,7 +74,7 @@ func TestAuthService(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				// Set up expectations
 				loginReq := &domain.LoginRequest{
-					Username: tc.username,
+					Email:    tc.Email,
 					Password: tc.password,
 				}
 				expectedResponse := &domain.LoginResponse{
@@ -104,28 +104,28 @@ func TestAuthService(t *testing.T) {
 	// Test Register
 	t.Run("Register", func(t *testing.T) {
 		tests := []struct {
-			name             string
-			username         string
-			password         string
-			expectedSuccess  bool
-			expectedMessage  string
-			expectedError    error
+			name            string
+			username        string
+			password        string
+			expectedSuccess bool
+			expectedMessage string
+			expectedError   error
 		}{
 			{
-				name:             "successful registration",
-				username:         "newuser",
-				password:         "newpass",
-				expectedSuccess:  true,
-				expectedMessage:  "Registration successful",
-				expectedError:    nil,
+				name:            "successful registration",
+				username:        "newuser",
+				password:        "newpass",
+				expectedSuccess: true,
+				expectedMessage: "Registration successful",
+				expectedError:   nil,
 			},
 			{
-				name:             "user already exists",
-				username:         "existinguser",
-				password:         "somepass",
-				expectedSuccess:  false,
-				expectedMessage:  "User already exists",
-				expectedError:    nil,
+				name:            "user already exists",
+				username:        "existinguser",
+				password:        "somepass",
+				expectedSuccess: false,
+				expectedMessage: "User already exists",
+				expectedError:   nil,
 			},
 		}
 
@@ -133,7 +133,7 @@ func TestAuthService(t *testing.T) {
 			t.Run(tc.name, func(t *testing.T) {
 				// Set up expectations
 				registerReq := &domain.RegisterRequest{
-					Username: tc.username,
+					Email:    tc.username,
 					Password: tc.password,
 				}
 				expectedResponse := &domain.RegisterResponse{
@@ -162,25 +162,25 @@ func TestAuthService(t *testing.T) {
 	// Test VerifyToken
 	t.Run("VerifyToken", func(t *testing.T) {
 		tests := []struct {
-			name             string
-			token            string
-			expectedSuccess  bool
-			expectedMessage  string
-			expectedError    error
+			name            string
+			token           string
+			expectedSuccess bool
+			expectedMessage string
+			expectedError   error
 		}{
 			{
-				name:             "valid token",
-				token:            "valid-token",
-				expectedSuccess:  true,
-				expectedMessage:  "Token is valid",
-				expectedError:    nil,
+				name:            "valid token",
+				token:           "valid-token",
+				expectedSuccess: true,
+				expectedMessage: "Token is valid",
+				expectedError:   nil,
 			},
 			{
-				name:             "invalid token",
-				token:            "invalid-token",
-				expectedSuccess:  false,
-				expectedMessage:  "Invalid token",
-				expectedError:    nil,
+				name:            "invalid token",
+				token:           "invalid-token",
+				expectedSuccess: false,
+				expectedMessage: "Invalid token",
+				expectedError:   nil,
 			},
 		}
 

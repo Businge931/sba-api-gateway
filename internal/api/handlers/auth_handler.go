@@ -64,13 +64,12 @@ func handleRequest[T any, U any](
 	}
 }
 
-// Login handler
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	handleRequest(w, r,
 		ValidateLoginRequest,
 		func(req *proto.LoginRequest) *models.LoginRequest {
 			return &models.LoginRequest{
-				Username: req.Username,
+				Email:    req.Email,
 				Password: req.Password,
 			}
 		},
@@ -89,14 +88,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-// Register handler
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	handleRequest(w, r,
 		ValidateRegisterRequest,
 		func(req *proto.RegisterRequest) *models.RegisterRequest {
 			return &models.RegisterRequest{
-				Username: req.Username,
-				Password: req.Password,
+				Email:     req.Email,
+				Password:  req.Password,
+				FirstName: req.FirstName,
+				LastName:  req.LastName,
 			}
 		},
 		func(ctx context.Context, req *models.RegisterRequest) (*models.GenericResponse, error) {
@@ -112,10 +112,8 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-// VerifyTokenMiddleware verifies the JWT token before allowing access to protected endpoints
 func (h *AuthHandler) VerifyTokenMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Extract token from the Authorization header
 		token := r.Header.Get("Authorization")
 
 		if token == "" {
@@ -141,17 +139,13 @@ func (h *AuthHandler) VerifyTokenMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// ValidateLoginRequest validates the LoginRequest fields
 func ValidateLoginRequest(req *proto.LoginRequest) bool {
-	return req.GetUsername() != "" && req.GetPassword() != ""
+	return req.GetEmail() != "" && req.GetPassword() != ""
 }
 
-// ValidateRegisterRequest validates the RegisterRequest fields
 func ValidateRegisterRequest(req *proto.RegisterRequest) bool {
-	return req.GetUsername() != "" && req.GetPassword() != ""
+	return req.GetEmail() != "" && req.GetPassword() != ""
 }
-
-// handleGRPCError maps gRPC errors to HTTP status codes and provides detailed error messages
 func handleGRPCError(w http.ResponseWriter, err error) {
 	// Set content type for proper JSON response
 	w.Header().Set("Content-Type", "application/json")
@@ -170,7 +164,6 @@ func handleGRPCError(w http.ResponseWriter, err error) {
 	// Get the error message from the status
 	errorMessage := st.Message()
 
-	// Default HTTP status
 	httpStatus := http.StatusInternalServerError
 
 	// Map gRPC status codes to HTTP status codes

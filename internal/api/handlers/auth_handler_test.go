@@ -56,7 +56,7 @@ func TestAuthHandler_Register(t *testing.T) {
 			name: "successful registration",
 			setupMock: func(mas *MockAuthService) {
 				mas.On("Register", mock.Anything, &models.RegisterRequest{
-					Username: "newuser",
+					Email:    "newuser@test.com",
 					Password: "newpass123",
 				}).Return(&models.RegisterResponse{
 					Success: true,
@@ -64,7 +64,7 @@ func TestAuthHandler_Register(t *testing.T) {
 				}, nil)
 			},
 			requestBody: map[string]string{
-				"username": "newuser",
+				"email":    "newuser@test.com",
 				"password": "newpass123",
 			},
 			wantStatus: http.StatusOK,
@@ -89,7 +89,7 @@ func TestAuthHandler_Register(t *testing.T) {
 			name:      "missing registration data",
 			setupMock: func(mas *MockAuthService) {},
 			requestBody: map[string]string{
-				"username": "",
+				"email":    "",
 				"password": "",
 			},
 			wantStatus: http.StatusForbidden,
@@ -106,7 +106,7 @@ func TestAuthHandler_Register(t *testing.T) {
 				)
 			},
 			requestBody: map[string]string{
-				"username": "existinguser",
+				"email":    "existinguser@test.com",
 				"password": "password123",
 			},
 			wantStatus: http.StatusBadRequest,
@@ -160,7 +160,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			name: "successful login",
 			setupMock: func(mas *MockAuthService) {
 				mas.On("Login", mock.Anything, &models.LoginRequest{
-					Username: "testuser",
+					Email:    "testuser@test.com",
 					Password: "testpass",
 				}).Return(&models.LoginResponse{
 					Success: true,
@@ -169,7 +169,7 @@ func TestAuthHandler_Login(t *testing.T) {
 				}, nil)
 			},
 			requestBody: map[string]string{
-				"username": "testuser",
+				"email":    "testuser@test.com",
 				"password": "testpass",
 			},
 			wantStatus: http.StatusOK,
@@ -195,7 +195,7 @@ func TestAuthHandler_Login(t *testing.T) {
 			name:      "missing credentials",
 			setupMock: func(mas *MockAuthService) {},
 			requestBody: map[string]string{
-				"username": "",
+				"email":    "",
 				"password": "",
 			},
 			wantStatus: http.StatusForbidden,
@@ -212,7 +212,7 @@ func TestAuthHandler_Login(t *testing.T) {
 				)
 			},
 			requestBody: map[string]string{
-				"username": "wronguser",
+				"email":    "wronguser@test.com",
 				"password": "wrongpass",
 			},
 			wantStatus: http.StatusUnauthorized,
