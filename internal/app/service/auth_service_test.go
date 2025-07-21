@@ -39,6 +39,30 @@ func (m *MockAuthService) VerifyToken(ctx context.Context, token string) (*domai
 	return args.Get(0).(*domain.VerifyTokenResponse), args.Error(1)
 }
 
+func (m *MockAuthService) RequestPasswordReset(ctx context.Context, req *domain.RequestPasswordResetRequest) (*domain.RequestPasswordResetResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domain.RequestPasswordResetResponse), args.Error(1)
+}
+
+func (m *MockAuthService) ChangePassword(ctx context.Context, req *domain.ChangePasswordRequest) (*domain.ChangePasswordResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domain.ChangePasswordResponse), args.Error(1)
+}
+
+func (m *MockAuthService) ResetPassword(ctx context.Context, req *domain.ResetPasswordRequest) (*domain.ResetPasswordResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domain.ResetPasswordResponse), args.Error(1)
+}
+
 func TestAuthServiceImpl_Login(t *testing.T) {
 	// Test cases
 	tests := []struct {

@@ -27,9 +27,9 @@ func (c *AuthServer) Login(ctx context.Context, req *domain.LoginRequest) (*doma
 		return nil, err
 	}
 	return &domain.LoginResponse{
-		Success: true, // Set success to true when login is successful
+		Success: true,
 		Token:   res.GetToken(),
-		Message: "Login successful", // Add a success message
+		Message: "Login successful",
 	}, nil
 }
 
@@ -45,7 +45,7 @@ func (c *AuthServer) Register(ctx context.Context, req *domain.RegisterRequest) 
 		return nil, err
 	}
 	return &domain.RegisterResponse{
-		Success: true, // Set success to true when registration is successful
+		Success: true,
 		Message: res.GetMessage(),
 	}, nil
 }
@@ -58,5 +58,51 @@ func (c *AuthServer) VerifyToken(ctx context.Context, token string) (*domain.Ver
 	return &domain.VerifyTokenResponse{
 		Success: res.GetSuccess(),
 		Message: res.GetMessage(),
+	}, nil
+}
+
+func (c *AuthServer) RequestPasswordReset(ctx context.Context, req *domain.RequestPasswordResetRequest) (*domain.RequestPasswordResetResponse, error) {
+	protoReq := &proto.RequestPasswordResetRequest{
+		Email: req.Email,
+	}
+	res, err := c.client.RequestPasswordReset(ctx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.RequestPasswordResetResponse{
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+	}, nil
+}
+
+func (c *AuthServer) ChangePassword(ctx context.Context, req *domain.ChangePasswordRequest) (*domain.ChangePasswordResponse, error) {
+	protoReq := &proto.ChangePasswordRequest{
+		UserId:      req.UserID,
+		OldPassword: req.OldPassword,
+		NewPassword: req.NewPassword,
+	}
+	res, err := c.client.ChangePassword(ctx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.ChangePasswordResponse{
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+	}, nil
+}
+
+func (c *AuthServer) ResetPassword(ctx context.Context, req *domain.ResetPasswordRequest) (*domain.ResetPasswordResponse, error) {
+	protoReq := &proto.ResetPasswordRequest{
+		Token:       req.Token,
+		NewPassword: req.NewPassword,
+	}
+	res, err := c.client.ResetPassword(ctx, protoReq)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.ResetPasswordResponse{
+		Success: res.GetSuccess(),
+		Message: res.GetMessage(),
+		UserID:  res.GetUserId(),
 	}, nil
 }

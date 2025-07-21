@@ -37,4 +37,35 @@ type (
 		Success bool
 		Message string
 	}
+
+	RequestPasswordResetRequest struct {
+		Email string
+	}
+
+	RequestPasswordResetResponse struct {
+		Success bool
+		Message string
+	}
+
+	ChangePasswordRequest struct {
+		UserID      string
+		OldPassword string
+		NewPassword string
+	}
+
+	ChangePasswordResponse struct {
+		Success bool
+		Message string
+	}
+
+	ResetPasswordRequest struct {
+		Token       string
+		NewPassword string
+	}
+
+	ResetPasswordResponse struct {
+		Success bool
+		Message string
+		UserID  string
+	}
 )

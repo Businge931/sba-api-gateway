@@ -24,6 +24,8 @@ func SetupRoutes(authService service.AuthService, oddsService service.OddsServic
 	// Public endpoints
 	router.HandleFunc("/login", authHandler.Login).Methods("POST")
 	router.HandleFunc("/register", authHandler.Register).Methods("POST")
+	router.HandleFunc("/request-password-reset", authHandler.RequestPasswordReset).Methods("POST")
+	router.HandleFunc("/reset-password", authHandler.ResetPassword).Methods("POST")
 
 	// Health check endpoint for container testing
 	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +34,9 @@ func SetupRoutes(authService service.AuthService, oddsService service.OddsServic
 	}).Methods("GET")
 
 	// Protected endpoints (require token verification)
+	// Password management endpoints
+	router.Handle("/change-password", authHandler.VerifyTokenMiddleware(http.HandlerFunc(authHandler.ChangePassword))).Methods("POST")
+
 	// Odds management endpoints
 	router.Handle("/api/odds/create", authHandler.VerifyTokenMiddleware(http.HandlerFunc(oddsHandler.CreateOdds))).Methods("POST")
 	router.Handle("/api/odds/read", authHandler.VerifyTokenMiddleware(http.HandlerFunc(oddsHandler.ReadOdds))).Methods("GET")

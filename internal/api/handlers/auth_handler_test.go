@@ -44,6 +44,30 @@ func (m *MockAuthService) VerifyToken(ctx context.Context, token string) (*model
 	return args.Get(0).(*models.VerifyTokenResponse), args.Error(1)
 }
 
+func (m *MockAuthService) RequestPasswordReset(ctx context.Context, req *models.RequestPasswordResetRequest) (*models.RequestPasswordResetResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.RequestPasswordResetResponse), args.Error(1)
+}
+
+func (m *MockAuthService) ChangePassword(ctx context.Context, req *models.ChangePasswordRequest) (*models.ChangePasswordResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.ChangePasswordResponse), args.Error(1)
+}
+
+func (m *MockAuthService) ResetPassword(ctx context.Context, req *models.ResetPasswordRequest) (*models.ResetPasswordResponse, error) {
+	args := m.Called(ctx, req)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*models.ResetPasswordResponse), args.Error(1)
+}
+
 func TestAuthHandler_Register(t *testing.T) {
 	tests := []struct {
 		name          string

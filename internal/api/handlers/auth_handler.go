@@ -16,6 +16,9 @@ type AuthService interface {
 	Login(ctx context.Context, req *models.LoginRequest) (*models.LoginResponse, error)
 	Register(ctx context.Context, req *models.RegisterRequest) (*models.RegisterResponse, error)
 	VerifyToken(ctx context.Context, token string) (*models.VerifyTokenResponse, error)
+	RequestPasswordReset(ctx context.Context, req *models.RequestPasswordResetRequest) (*models.RequestPasswordResetResponse, error)
+	ChangePassword(ctx context.Context, req *models.ChangePasswordRequest) (*models.ChangePasswordResponse, error)
+	ResetPassword(ctx context.Context, req *models.ResetPasswordRequest) (*models.ResetPasswordResponse, error)
 }
 
 type AuthHandler struct {
@@ -146,6 +149,90 @@ func ValidateLoginRequest(req *proto.LoginRequest) bool {
 func ValidateRegisterRequest(req *proto.RegisterRequest) bool {
 	return req.GetEmail() != "" && req.GetPassword() != ""
 }
+func (h *AuthHandler) RequestPasswordReset(w http.ResponseWriter, r *http.Request) {
+	var req models.RequestPasswordResetRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, `{"details": "Invalid request"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Validate request
+	if req.Email == "" {
+		http.Error(w, `{"details": "Email is required"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Call the service method
+	res, err := h.authService.RequestPasswordReset(r.Context(), &req)
+	if err != nil {
+		handleGRPCError(w, err)
+		return
+	}
+
+	// Write the response
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, `{"details": "Failed to encode response"}`, http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *AuthHandler) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	var req models.ChangePasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, `{"details": "Invalid request"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Validate request
+	if req.UserID == "" || req.OldPassword == "" || req.NewPassword == "" {
+		http.Error(w, `{"details": "UserID, old password, and new password are required"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Call the service method
+	res, err := h.authService.ChangePassword(r.Context(), &req)
+	if err != nil {
+		handleGRPCError(w, err)
+		return
+	}
+
+	// Write the response
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, `{"details": "Failed to encode response"}`, http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *AuthHandler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	var req models.ResetPasswordRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, `{"details": "Invalid request"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Validate request
+	if req.Token == "" || req.NewPassword == "" {
+		http.Error(w, `{"details": "Token and new password are required"}`, http.StatusBadRequest)
+		return
+	}
+
+	// Call the service method
+	res, err := h.authService.ResetPassword(r.Context(), &req)
+	if err != nil {
+		handleGRPCError(w, err)
+		return
+	}
+
+	// Write the response
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, `{"details": "Failed to encode response"}`, http.StatusInternalServerError)
+		return
+	}
+}
+
 func handleGRPCError(w http.ResponseWriter, err error) {
 	// Set content type for proper JSON response
 	w.Header().Set("Content-Type", "application/json")

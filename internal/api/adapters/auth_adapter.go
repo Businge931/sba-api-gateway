@@ -79,3 +79,67 @@ func (a *AuthServiceAdapter) VerifyToken(ctx context.Context, token string) (*mo
 		Message: domainRes.Message,
 	}, nil
 }
+
+// RequestPasswordReset adapts between models.RequestPasswordResetRequest and domain.RequestPasswordResetRequest
+func (a *AuthServiceAdapter) RequestPasswordReset(ctx context.Context, req *models.RequestPasswordResetRequest) (*models.RequestPasswordResetResponse, error) {
+	// Convert models.RequestPasswordResetRequest to domain.RequestPasswordResetRequest
+	domainReq := &domain.RequestPasswordResetRequest{
+		Email: req.Email,
+	}
+
+	// Call the service with the domain request
+	domainRes, err := a.service.RequestPasswordReset(ctx, domainReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert domain.RequestPasswordResetResponse to models.RequestPasswordResetResponse
+	return &models.RequestPasswordResetResponse{
+		Success: domainRes.Success,
+		Message: domainRes.Message,
+	}, nil
+}
+
+// ChangePassword adapts between models.ChangePasswordRequest and domain.ChangePasswordRequest
+func (a *AuthServiceAdapter) ChangePassword(ctx context.Context, req *models.ChangePasswordRequest) (*models.ChangePasswordResponse, error) {
+	// Convert models.ChangePasswordRequest to domain.ChangePasswordRequest
+	domainReq := &domain.ChangePasswordRequest{
+		UserID:      req.UserID,
+		OldPassword: req.OldPassword,
+		NewPassword: req.NewPassword,
+	}
+
+	// Call the service with the domain request
+	domainRes, err := a.service.ChangePassword(ctx, domainReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert domain.ChangePasswordResponse to models.ChangePasswordResponse
+	return &models.ChangePasswordResponse{
+		Success: domainRes.Success,
+		Message: domainRes.Message,
+	}, nil
+}
+
+// ResetPassword adapts between models.ResetPasswordRequest and domain.ResetPasswordRequest
+func (a *AuthServiceAdapter) ResetPassword(ctx context.Context, req *models.ResetPasswordRequest) (*models.ResetPasswordResponse, error) {
+	// Convert models.ResetPasswordRequest to domain.ResetPasswordRequest
+	domainReq := &domain.ResetPasswordRequest{
+		Token:       req.Token,
+		NewPassword: req.NewPassword,
+	}
+
+	// Call the service with the domain request
+	domainRes, err := a.service.ResetPassword(ctx, domainReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert domain.ResetPasswordResponse to models.ResetPasswordResponse
+	return &models.ResetPasswordResponse{
+		Success: domainRes.Success,
+		Message: domainRes.Message,
+		UserID:  domainRes.UserID,
+	}, nil
+}
