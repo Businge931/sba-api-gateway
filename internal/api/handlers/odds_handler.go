@@ -3,7 +3,8 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"io"
+
+	// "io"
 	"net/http"
 	"strings"
 	"time"
@@ -46,83 +47,83 @@ func handleValidationError(w http.ResponseWriter, errMsg string) {
 }
 
 // handleOddsRequest is a helper function to handle common logic for odds requests
-func (h *OddsHandler) handleOddsRequest(
-	w http.ResponseWriter,
-	r *http.Request,
-	serviceCall func(context.Context, interface{}) (interface{}, error),
-	req interface{},
-) {
-	// Read the request body
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		handleValidationError(w, `{"details": "Failed to read request body"}`)
-		return
-	}
+// func (h *OddsHandler) handleOddsRequest(
+// 	w http.ResponseWriter,
+// 	r *http.Request,
+// 	serviceCall func(context.Context, interface{}) (interface{}, error),
+// 	req interface{},
+// ) {
+// 	// Read the request body
+// 	body, err := io.ReadAll(r.Body)
+// 	if err != nil {
+// 		handleValidationError(w, `{"details": "Failed to read request body"}`)
+// 		return
+// 	}
 
-	// Decode JSON request
-	if err := json.Unmarshal(body, req); err != nil {
-		handleValidationError(w, `{"details": "Invalid JSON request"}`)
-		return
-	}
+// 	// Decode JSON request
+// 	if err := json.Unmarshal(body, req); err != nil {
+// 		handleValidationError(w, `{"details": "Invalid JSON request"}`)
+// 		return
+// 	}
 
-	// Validate league and date
-	var league, date string
-	switch r := req.(type) {
-	case *models.CreateOddsRequest:
-		league, date = r.League, r.GameDate
-	case *models.ReadOddsRequest:
-		league, date = r.League, r.Date
-	case *models.UpdateOddsRequest:
-		league, date = r.League, r.GameDate
-	case *models.DeleteOddsRequest:
-		league, date = r.League, r.GameDate
-	default:
-		handleValidationError(w, `{"details": "Invalid request type"}`)
-		return
-	}
+// 	// Validate league and date
+// 	var league, date string
+// 	switch r := req.(type) {
+// 	case *models.CreateOddsRequest:
+// 		league, date = r.League, r.GameDate
+// 	case *models.ReadOddsRequest:
+// 		league, date = r.League, r.Date
+// 	case *models.UpdateOddsRequest:
+// 		league, date = r.League, r.GameDate
+// 	case *models.DeleteOddsRequest:
+// 		league, date = r.League, r.GameDate
+// 	default:
+// 		handleValidationError(w, `{"details": "Invalid request type"}`)
+// 		return
+// 	}
 
-	if errMsg, valid := validateLeagueAndDate(league, date); !valid {
-		handleValidationError(w, errMsg)
-		return
-	}
+// 	if errMsg, valid := validateLeagueAndDate(league, date); !valid {
+// 		handleValidationError(w, errMsg)
+// 		return
+// 	}
 
-	// Convert simple date format to RFC3339 format expected by CRUD service
-	if parsedDate, err := time.Parse("2006-01-02", date); err == nil {
-		// Set time to noon UTC to ensure it's a valid future time
-		rfc3339Date := parsedDate.Format(time.RFC3339)
+// 	// Convert simple date format to RFC3339 format expected by CRUD service
+// 	if parsedDate, err := time.Parse("2006-01-02", date); err == nil {
+// 		// Set time to noon UTC to ensure it's a valid future time
+// 		rfc3339Date := parsedDate.Format(time.RFC3339)
 
-		// Update the request with the formatted date
-		switch r := req.(type) {
-		case *models.CreateOddsRequest:
-			r.GameDate = rfc3339Date
-			// Convert league name to proper title case for CRUD service
-			r.League = "English Premier League"
-		case *models.ReadOddsRequest:
-			r.Date = rfc3339Date
-			r.League = "English Premier League"
-		case *models.UpdateOddsRequest:
-			r.GameDate = rfc3339Date
-			r.League = "English Premier League"
-		case *models.DeleteOddsRequest:
-			r.GameDate = rfc3339Date
-			r.League = "English Premier League"
-		}
-	}
+// 		// Update the request with the formatted date
+// 		switch r := req.(type) {
+// 		case *models.CreateOddsRequest:
+// 			r.GameDate = rfc3339Date
+// 			// Convert league name to proper title case for CRUD service
+// 			r.League = "English Premier League"
+// 		case *models.ReadOddsRequest:
+// 			r.Date = rfc3339Date
+// 			r.League = "English Premier League"
+// 		case *models.UpdateOddsRequest:
+// 			r.GameDate = rfc3339Date
+// 			r.League = "English Premier League"
+// 		case *models.DeleteOddsRequest:
+// 			r.GameDate = rfc3339Date
+// 			r.League = "English Premier League"
+// 		}
+// 	}
 
-	// Call the service method
-	res, err := serviceCall(r.Context(), req)
-	if err != nil {
-		handleGRPCError(w, err)
-		return
-	}
+// 	// Call the service method
+// 	res, err := serviceCall(r.Context(), req)
+// 	if err != nil {
+// 		handleGRPCError(w, err)
+// 		return
+// 	}
 
-	// Write the response
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		http.Error(w, `{"details": "Failed to encode response"}`, http.StatusInternalServerError)
-		return
-	}
-}
+// 	// Write the response
+// 	w.WriteHeader(http.StatusOK)
+// 	if err := json.NewEncoder(w).Encode(res); err != nil {
+// 		http.Error(w, `{"details": "Failed to encode response"}`, http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
 // CreateOdds handles the creation of odds
 func (h *OddsHandler) CreateOdds(w http.ResponseWriter, r *http.Request) {
@@ -131,20 +132,20 @@ func (h *OddsHandler) CreateOdds(w http.ResponseWriter, r *http.Request) {
 		handleValidationError(w, "Invalid request body")
 		return
 	}
-	
+
 	// Validate request
 	if _, valid := validateLeagueAndDate(req.League, req.GameDate); !valid {
 		handleValidationError(w, "Invalid league or date")
 		return
 	}
-	
+
 	// Call service
 	res, err := h.oddsService.CreateOdds(r.Context(), &req)
 	if err != nil {
 		handleGRPCError(w, err)
 		return
 	}
-	
+
 	// Write response
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
@@ -170,20 +171,20 @@ func (h *OddsHandler) ReadOdds(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// Validate request
 	if _, valid := validateLeagueAndDate(req.League, req.Date); !valid {
 		handleValidationError(w, "Invalid league or date")
 		return
 	}
-	
+
 	// Call service
 	res, err := h.oddsService.ReadOdds(r.Context(), &req)
 	if err != nil {
 		handleGRPCError(w, err)
 		return
 	}
-	
+
 	// Write response
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
@@ -201,20 +202,20 @@ func (h *OddsHandler) UpdateOdds(w http.ResponseWriter, r *http.Request) {
 		handleValidationError(w, "Invalid request body")
 		return
 	}
-	
+
 	// Validate request
 	if _, valid := validateLeagueAndDate(req.League, req.GameDate); !valid {
 		handleValidationError(w, "Invalid league or date")
 		return
 	}
-	
+
 	// Call service
 	res, err := h.oddsService.UpdateOdds(r.Context(), &req)
 	if err != nil {
 		handleGRPCError(w, err)
 		return
 	}
-	
+
 	// Write response
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
@@ -242,20 +243,20 @@ func (h *OddsHandler) DeleteOdds(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	
+
 	// Validate request
 	if _, valid := validateLeagueAndDate(req.League, req.GameDate); !valid {
 		handleValidationError(w, "Invalid league or date")
 		return
 	}
-	
+
 	// Call service
 	res, err := h.oddsService.DeleteOdds(r.Context(), &req)
 	if err != nil {
 		handleGRPCError(w, err)
 		return
 	}
-	
+
 	// Write response
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
