@@ -22,8 +22,8 @@ services:
     build:
       context: ../sba-user-accounts
       dockerfile: Dockerfile
-    ports:
-      - "50051:50051"
+    expose:
+      - "50051"
     networks:
       - sba-network
 
@@ -31,8 +31,8 @@ services:
     build:
       context: ../sba-crud-ops
       dockerfile: Dockerfile
-    ports:
-      - "50052:50052"
+    expose:
+      - "50052"
     networks:
       - sba-network
 
