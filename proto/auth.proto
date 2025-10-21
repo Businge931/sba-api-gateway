@@ -11,7 +11,7 @@ service AuthService {
   rpc RequestPasswordReset (RequestPasswordResetRequest) returns (RequestPasswordResetResponse);
   rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
   rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
-}
+} 
 
 message LoginRequest {
   string email = 1;
